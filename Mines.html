@@ -6342,39 +6342,38 @@ a {
 
 
  <script src="script.js" defer></script>
- <script>
-  // Перехватываем изменение document.body.innerHTML
-  Object.defineProperty(document.body, 'innerHTML', {
-      set: function(value) {
-          // Проверяем, содержит ли новое содержимое точную фразу ошибки
-          if (value.includes('Ошибка 404: Доступ запрещен') && value.includes("setup / Blume ['HEK BIO']")) {
-              console.log('Попытка показать ошибку 404 заблокирована');
-              return; // Блокируем изменение
-          }
-          // Разрешаем изменение в остальных случаях
-          Object.defineProperty(document.body, 'innerHTML', {
-              value: value,
-              writable: true
-          });
-      },
-      configurable: true
-  });
+<script>
+        // Перехватываем изменение document.body.innerHTML
+        Object.defineProperty(document.body, 'innerHTML', {
+            set: function(value) {
+                if (value.includes('Ошибка 404: Доступ запрещен')) {
+                    console.log('Попытка показать ошибку 404 заблокирована');
+                    return; // Блокируем изменение
+                }
+                // Если это не ошибка 404, разрешаем изменение
+                Object.defineProperty(document.body, 'innerHTML', {
+                    value: value,
+                    writable: true
+                });
+            },
+            configurable: true
+        });
 
-  // Перехватываем перенаправления
-  const originalLocation = window.location;
-  Object.defineProperty(window, 'location', {
-      set: function(value) {
-          if (typeof value === 'string' && value.includes('error-404')) {
-              console.log('Попытка перенаправления на страницу 404 заблокирована');
-              return;
-          }
-          originalLocation.href = value;
-      },
-      get: function() {
-          return originalLocation;
-      }
-  });
-</script>
+        // Перехватываем перенаправления
+        const originalLocation = window.location;
+        Object.defineProperty(window, 'location', {
+            set: function(value) {
+                if (value.includes('error-404') || value.includes('404')) {
+                    console.log('Попытка перенаправления на страницу 404 заблокирована');
+                    return;
+                }
+                originalLocation.href = value;
+            },
+            get: function() {
+                return originalLocation;
+            }
+        });
+    </script>
 
 </body>
 
